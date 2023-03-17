@@ -79,7 +79,7 @@ function Regform() {
           type="text"
           placeholder="Please enter your first name"
           class="form-control"
-          id ="firstname" onChange={(e)=>{setfirstname(e.target.value)}} requir
+          id ="firstname" onChange={(e)=>{setfirstname(e.target.value)}} required
         />
         <p id="firstnamevalidation"></p>
       </div>

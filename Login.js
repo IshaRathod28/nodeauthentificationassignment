@@ -3,12 +3,35 @@ import axios from "axios"
 function Login(){
     const[loginemail,setloginemail]=useState("");
     const[loginpassword,setloginpassword]=useState("");
+    const[data,setdata]=useState([]);
     const clickloginaction=async(e)=>{
-        e.preventdefault();
-        const res= await axios.post("",{
+        e.preventDefault();
+       
+        const res= await axios.post("http://localhost:8005/logindata",{
            loginemail : loginemail,
            loginpassword : loginpassword
         })
+      .then((res)=>{
+        // console.log(res.data);
+        // if(res.data[0]){
+        //   console.log("Yeah! Your login is successfull")
+        // }
+        console.log(res)
+        if(res.data == "Sorry , user is not exist , your login is fail, please try again"){
+          console.log(res.data);
+        }
+        else{
+          console.log("Yeah! Your login is successfull");
+          console.log(res.data)
+        }
+       
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+
+
+
     }
     return(
         <>
@@ -24,7 +47,7 @@ function Login(){
           type="text"
           placeholder="Please enter your Email"
           class="form-control"
-          required
+          // required
           onChange={(e)=>{setloginemail(e.target.value)}}
         /></div>
 

@@ -1,12 +1,36 @@
 import React,{useEffect,useState} from 'react';
+import {Link} from 'react-router-dom'
 import axios from "axios"
+import Dashboard from './Dashboard';
 function Login(){
     const[loginemail,setloginemail]=useState("");
     const[loginpassword,setloginpassword]=useState("");
     const[data,setdata]=useState([]);
+    const[showerror,setshowerror]=useState("");
+    const[showsuccessmsg,setshowsuccessmsg]=useState("");
+    const[showdashboard,setshowdashboard]=useState(false);
+    const[showlogin,setshowlogin]=useState(true);
     const clickloginaction=async(e)=>{
-        e.preventDefault();
+      e.preventDefault();
        
+      if(loginpassword.length < 8) { 
+        return (alert("Error: Password must be at least 8 characters"))
+             } else if(loginpassword.search(/[a-z]/) < 0) { 
+              return (alert("Error: Password must contain at least one lowercase letter"))
+               
+  
+              } else if(loginpassword.search(/[A-Z]/) < 0) { 
+                return (alert("Error: Password must contain at least one uppercase letter"))
+              
+              
+              } else if(loginpassword.search(/[0-9]/) < 0) { 
+                return (alert("Error: Password must contain at least one number"))
+           
+              
+              } else if(loginpassword.search(/[=.*@#$%^&-+=())(?=\\S+$]/) < 0) { 
+                return (alert("Error: Password must contain at least special character"))
+              }else{
+      
         const res= await axios.post("http://localhost:8005/logindata",{
            loginemail : loginemail,
            loginpassword : loginpassword
@@ -19,10 +43,15 @@ function Login(){
         console.log(res)
         if(res.data == "Sorry , user is not exist , your login is fail, please try again"){
           console.log(res.data);
+          setshowerror("Sorry , user is not exist , your login is fail, please try again")
         }
         else{
           console.log("Yeah! Your login is successfull");
-          console.log(res.data)
+          console.log(res.data);
+          setshowsuccessmsg("Yeah! Your login is successfull")
+         setshowdashboard(true)
+         setshowlogin(false)
+
         }
        
       })
@@ -30,12 +59,12 @@ function Login(){
         console.log(error)
       })
 
-
+    }
 
     }
     return(
         <>
-        <div>
+        {showlogin?<>       <div>
             <h1>Login</h1>
         </div>
         <div>
@@ -44,7 +73,7 @@ function Login(){
         Email
         <br />
         <input
-          type="text"
+          type="email"
           placeholder="Please enter your Email"
           class="form-control"
           // required
@@ -55,6 +84,7 @@ function Login(){
         Password
         <br />
         <input
+        name="password"
           type="text"
           placeholder="Please enter your password"
           class="form-control"
@@ -63,8 +93,30 @@ function Login(){
         <div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
+      <div>
+        <p id="showerror">
+          {showerror}
+        </p>
+      </div>
+      <div>
+        <p id="showsuccess">
+          {showsuccessmsg}
+        </p>
+    
+      </div>
+      <div className='isha'>
+
+<label>Not registered yet?</label>
+<br />
+{<Link to="/registration" >Please click here to register </Link>}
+</div>
 </form>
-        </div>
+</div></>:null}
+ 
+{showdashboard?
+<div>
+  <Link to="/dashboard" className="btn btn-success" style={{margin:'100px'}}>Show Your Dashboard</Link></div>:null}
+       
         </>
     )
 }

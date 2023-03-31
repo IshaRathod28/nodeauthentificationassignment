@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import axios from "axios";
+import {Link} from 'react-router-dom'
 function Regform() {
 
     
@@ -9,58 +10,75 @@ function Regform() {
         const[password,setpassword]=useState("");
         const[confirmpassword,setconfirmpassword]=useState("");
         const[data,setdata]=useState([]);
-
+        
+        function allLetter(inputtxt)
+       
+        {
+          console.log(inputtxt);
+         var letters = /^[A-Za-z]+$/;
+         if(inputtxt.value.match(letters))
+           {
+            return true;
+           }
+         else
+           {
+           alert("Only characters are allowed in " + inputtxt.name);
+           return false;
+           }
+        }
 
    const sendRegdatawhensubmit= async(e)=>{
     e.preventDefault();
-    const res=await axios.post("http://localhost:8005/regdata",{
-        firstname : firstname,
-        lastname : lastname,
-        email :email ,
-        password : password ,
-        confirmpassword : confirmpassword
-    })
+    if(password.length < 8) { 
+return (alert("Error: Password must be at least 8 characters"))
+     } else if(password.search(/[a-z]/) < 0) { 
+      return (alert("Error: Password must contain at least one lowercase letter"))
+       
+      
+      } else if(password.search(/[A-Z]/) < 0) { 
+        return (alert("Error: Password must contain at least one uppercase letter"))
+      
+      
+      } else if(password.search(/[0-9]/) < 0) { 
+        return (alert("Error: Password must contain at least one number"))
+   
+      
+      } else if(password.search(/[=.*@#$%^&-+=())(?=\\S+$]/) < 0) { 
+        return (alert("Error: Password must contain at least special character"))
+      }
+      else if(password != confirmpassword)
+{
+  return(
+      alert("Password And Confirm Password Must Be Same")
+  )
+}
+      else if(allLetter(document.form.firstname)&&allLetter(document.form.lastname)){
+       console.log(true)
+       console.log("dd")
+       
+       const res=await axios.post("http://localhost:8005/regdata",{
+           firstname : firstname,
+           lastname : lastname,
+           email :email ,
+           password : password ,
+           confirmpassword : confirmpassword
+       })
+      //  console.log(res.data)
+      document.getElementById("erroremail").innerHTML=res.data
+      document.getElementById("erroremail").style.color="red"
+         }
+        // else if(firstname.search(/[0-9]/) > 0) { 
+        //   return (alert("Error: Firstname cannot contain any numeric value"))
+        //   }
+      else{
+       
+      }   
+   
    }
 
 
 
-    // function allowfirstnameastext(){
-    //     var firstnameinput=document.getElementById("firstname").value;
-    //     if(isNaN(firstnameinput)){
-    //         document.getElementById("firstnamevalidation").style.color="green";
-    //         document.getElementById("firstnamevalidation").style.fontSize="small";
-    //         document.getElementById("firstnamevalidation").innerHTML="Correct input";
-    //     }else{
-    //         document.getElementById("firstnamevalidation").style.color="red";
-    //         document.getElementById("firstnamevalidation").style.fontSize="small";
-    //         document.getElementById("firstnamevalidation").innerHTML="Inorrect input";
-    //     }
-    // }
-    // function allowlastnameastext(){
-    //     var lastnameinput=document.getElementById("lastname").value;
-    //     if(isNaN(lastnameinput)){
-    //         document.getElementById("lastnamevalidation").style.color="green";
-    //         document.getElementById("lastnamevalidation").style.fontSize="small";
-    //         document.getElementById("lastnamevalidation").innerHTML="Correct input";
-    //     }else{
-    //         document.getElementById("lastnamevalidation").style.color="red";
-    //         document.getElementById("lastnamevalidation").style.fontSize="small";
-    //         document.getElementById("lastnamevalidation").innerHTML="Inorrect input";
-    //     }
-    // }
-
-    // function allownumberinputfirstnum(){
-    //     var firstnuminput = document.getElementById("firstname").value;
-    //     if(/^ [0-9]*$/.test(firstnuminput)){
-    //         document.getElementById("firstnamevalidation").style.color="green";
-    //         document.getElementById("firstnamevalidation").innerHTML="Correct input"
-    //     }
-    //     else{
-    //         document.getElementById("firstnamevalidation").style.color="red";
-    //         document.getElementById("firstnamevalidation").innerHTML="Error:Only numeric values are allowed  ";
-    //     }
-    
-    //     }
+  
     
 
   return (
@@ -71,12 +89,13 @@ function Regform() {
             
        
     </div>
-    <form onSubmit={sendRegdatawhensubmit}>
+    <form onSubmit={sendRegdatawhensubmit} name="form">
       <div align="center" class="title">
         Firstname
         <br />
         <input
           type="text"
+          name="firstname"
           placeholder="Please enter your first name"
           class="form-control"
           id ="firstname" onChange={(e)=>{setfirstname(e.target.value)}} required
@@ -87,6 +106,7 @@ function Regform() {
         Lastname
         <br />
         <input
+        name="lastname"
           type="text"
           placeholder="Please enter your last name"
           class="form-control"
@@ -100,7 +120,7 @@ function Regform() {
         Email
         <br />
         <input
-          type="text"
+          type="email"
           placeholder="Please enter your email"
           class="form-control"
           required
@@ -129,9 +149,17 @@ function Regform() {
           onChange={(e)=>{setconfirmpassword(e.target.value)}}
         />
       </div>
+      <br />
+      <p id="erroremail"></p>
       <div>
         <button type="submit" class="btn btn-primary" >Submit</button>
       </div>
+      <div className='isha'>
+
+<label>Already registered?</label>
+<br />
+<Link to="/login" >Please click here to login </Link>
+</div>
       </form>
       </>
 
@@ -139,3 +167,4 @@ function Regform() {
 }
 
 export default Regform;
+
